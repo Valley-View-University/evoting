@@ -42,6 +42,10 @@
 		$errmsg_arr[] = 'Password missing';
 		$errflag = true;
 	}
+	if($stat == 'voted'){
+		$errmsg_arr[] = 'You have already voted...you cant vote more than once!!';
+		$errflag = true;
+	}
 	
 	//If there are input validations, redirect back to the login form
 	if($errflag) {
@@ -55,16 +59,16 @@
 	if($position=='Admin') {
 	$qry="SELECT * FROM admin WHERE username='$login' AND password='$password'";
 	}
-	if($position=='Student') {
-	$qry="SELECT * FROM students WHERE username='$login' AND password='$password' AND status='$stat'";
+	if($position=='Voter') {
+	$qry="SELECT * FROM voters WHERE username='$login' AND password='$password' AND status='$stat'";
 	}
 	$result=mysql_query($qry);
-	
+
 	//Check whether the query was successful or not
 	if($result) {
 		if(mysql_num_rows($result) > 0) {
 			//Login Successful
-			if($position=='Student') {
+			if($position=='Voter') {
 			session_regenerate_id();
 			$member = mysql_fetch_assoc($result);
 			$_SESSION['SESS_MEMBER_ID'] = $member['username'];
