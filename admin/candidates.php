@@ -1,0 +1,127 @@
+<html>
+<head>
+<title>
+	E-Voting System Admin Panel
+</title>
+<link rel="icon" type="image/png" href="../favicon.png" />
+<!-- CSS Style -->
+<link rel="stylesheet" href="admin.css">
+<script src="argiepolicarpio.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/application.js" type="text/javascript" charset="utf-8"></script>
+<!--sa poip up-->
+<link href="src/facebox.css" media="screen" rel="stylesheet" type="text/css" />
+<script src="lib/jquery.js" type="text/javascript"></script>
+<script src="src/facebox.js" type="text/javascript"></script>
+<script type="text/javascript">
+  jQuery(document).ready(function($) {
+    $('a[rel*=facebox]').facebox({
+      loadingImage : 'src/loading.gif',
+      closeImage   : 'src/closelabel.png'
+    })
+  })
+</script>
+</head>
+<body>
+	<div id="top">
+		<div class="logo">
+			<img src="../psu.png" style="width: 44px;">
+		</div>
+		<div class="welcome">
+			<img alt="" src="img/userpic.png">
+			<span>Howdy, Admin!</span>
+		</div>
+	</div>
+	<div class="container  clearfix">
+		<div class="one-third1 column">
+			<ul>
+				<li><a href="index.php"><img alt="" src="img/home.png"><span>Dash Board</span></a></li>
+				<li><a href="winner.php"><img alt="" src="img/win.png"><span>Winner</span></a></li>
+				<li class="active"><a href="candidates.php"><img alt="" src="img/candidates.png"><span>Candidates</span></a></li>
+				<li><a href="parties.php"><img alt="" src="img/parties.png"><span>Parties</span></a></li>
+				<li><a href="voters.php"><img alt="" src="img/user.png"><span>Voters</span></a></li>
+				<li><a href="idnumbers.php"><img alt="" src="img/numbers.png"><span>Voters Information</span></a></li>
+				<li><a href="admin.php"><img alt="" src="img/userpic.png"><span>Admin Acount</span></a></li>
+				<li><a href="position.php"><img alt="" src="img/position.png"><span>Position</span></a></li>
+				<li><a href="../index.php"><img alt="" src="img/logout.png"><span>Logout</span></a></li>
+			</ul>
+		</div>
+		<div class="two-thirds1 column">
+			<div class="thewraper">
+			<div id="formdesign"><input type="text" name="filter" value="" id="filter" placeholder="search..." autocomplete="off" /></div>
+			<a rel="facebox" href="addcandidates.php"> Add Candidates </a>
+			<table id="resultTable" data-responsive="table">
+				<thead>
+					<tr>
+						<th> Image </th>
+						<th> Name </th>
+						<th> Position </th>
+						<th> Party </th>
+						<th> Votes </th>
+						<th> Action </th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php
+						include('../connect.php');
+						$result = $db->prepare("SELECT * FROM candidates ORDER BY position DESC");
+						$result->execute();
+						for($i=0; $row = $result->fetch(); $i++){
+					?>
+					<tr class="record">
+						<td><a rel="facebox" href="editphoto.php?id=<?php echo $row['id']; ?>"><img src="candidates/<?php echo $row['image']; ?>" /></a></td>
+						<td><?php echo $row['name']; ?></td>
+						<td><?php echo $row['position']; ?></td>
+						<td><?php echo $row['party']; ?></td>
+						<td><a rel="facebox" href="breakdown.php?id=<?php echo $row['id']; ?>&name=<?php echo $row['name']; ?>&position=<?php echo $row['position']; ?>&party=<?php echo $row['party']; ?>&numberofvotes=<?php echo $row['votes']; ?>" title="click to view the breakdown of votes"><?php echo $row['votes']; ?></a></td>
+						<td><a rel="facebox" href="editcandidates.php?id=<?php echo $row['id']; ?>"> Edit </a> | <a href="#" id="<?php echo $row['id']; ?>" class="delbutton" title="Click To Delete">Delete</a></td>
+					</tr>
+					<?php
+						}
+					?>
+				</tbody>
+			</table>
+			</div>
+		</div>
+	</div>
+	<div id="footer">
+		<div class="copyrights">&copy; Copyright 2016</div>
+	</div>
+	<script src="js/jquery.js"></script>
+  <script type="text/javascript">
+$(function() {
+
+
+$(".delbutton").click(function(){
+
+//Save the link in a variable called element
+var element = $(this);
+
+//Find the id of the link that was clicked
+var del_id = element.attr("id");
+
+//Built a url to send
+var info = 'id=' + del_id;
+ if(confirm("Sure you want to delete this update? There is NO undo!"))
+		  {
+
+ $.ajax({
+   type: "GET",
+   url: "deletecandidates.php",
+   data: info,
+   success: function(){
+   
+   }
+ });
+         $(this).parents(".record").animate({ backgroundColor: "#fbc7c7" }, "fast")
+		.animate({ opacity: "hide" }, "slow");
+
+ }
+
+return false;
+
+});
+
+});
+</script>
+</body>
+</html>
